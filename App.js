@@ -1,26 +1,14 @@
-import React from 'react';
-import {View, Text, Image, StyleSheet} from 'react-native';
 
-const App = () => {
-  return (
-        <View style={style.container}>
-            <Text>ddddd</Text>
-          
-        </View>
-  );
-};
+import React, {Component} from 'react';
+import { LogBox } from 'react-native';
+import MainRoutes from './src/routes/Routes';
 
-const style = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-    text: {
-        color: 'blue',
-    },
-    image: {
-        width: 100,
-        height: 100,
-        borderRadius: 100 / 2,
-    },
-});
-export default App;
+export default class App extends Component {
+
+    render() {
+        LogBox.ignoreAllLogs()
+        return (
+            <MainRoutes />
+        );
+    }
+}
