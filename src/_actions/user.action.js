@@ -7,7 +7,7 @@ export const userAction = {
 };
 
 function Regsiter(dataForm) {
-    return axios.post(`https://qubecube.com/HamsterLife/Backend/api/Users`, dataForm ).then(res => {
+    return axios.post(`https://qubecube.com/RecommentFood/Backend/api/Register`, dataForm ).then(res => {
         return res.data;
     }).catch(e => {
         console.log("ErrorApi Regsiter", e)
@@ -16,7 +16,7 @@ function Regsiter(dataForm) {
 }
 
 function Login(dataForm) {
-    return axios.post(`https://qubecube.com/HamsterLife/Backend/api/Login`, dataForm ).then(res => {
+    return axios.post(`https://qubecube.com/RecommentFood/Backend/api/Login`, dataForm ).then(res => {
         return res.data;
     }).catch(e => {
         console.log("ErrorApi Login", e)

@@ -1,4 +1,3 @@
-
 import React, { Component } from 'react';
 import {
     Text,
@@ -10,72 +9,86 @@ import {
     SafeAreaView,
     TextInput,
     ImageBackground,
-    AsyncStorage,
-    Animated,
-    KeyboardAvoidingView,
-    Alert,
-    Modal,
-    ActivityIndicator,
-    Platform,
     Dimensions,
-    Linking,
-    AppState
+    Platform,
+    AsyncStorage,
+    ViewPropTypes,
+    ActivityIndicator,
 } from 'react-native';
 import MainStyles from '../styles/MainStyles';
 import InputStyles from '../styles/InputStyles';
 import ModalStyles from '../styles/ModalStyles';
 
+import { userAction } from "../_actions";
+import { foodsAction } from "../_actions";
+
 import Spinner from 'react-native-loading-spinner-overlay';
 import ModalLib from 'react-native-modal';
-import moment from 'moment';
-import 'moment/locale/th';
-import Swipeable from 'react-native-gesture-handler/Swipeable';
-
-import { bandicotaAction } from "../_actions";
 
 
 export default class Home extends Component {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            loading: true,
-            isCheckAlert: null,
+    state = {
+        loading: true,
+        isCheckAlert: null,
 
-            isProfile: {},
-            getBandicota: [],
-        };
-        this.refsArray = []; // add this
-    }
+        tabBar: 'Category',
+        allFoods: [],
+        allFoodsByRegion: [],
+        Recommend: []
+    };
 
     async componentDidMount() {
-        const isProfile = await AsyncStorage.getItem('isProfile');
-        var isProfileDecrypt = JSON.parse(isProfile);
-        console.log("isProfileDecrypt", isProfileDecrypt)
-        this.setState({
-            isProfile: isProfileDecrypt,
-        })
-        this.onGetBandicota(isProfileDecrypt.id)
-        this.props.navigation.addListener('focus', () => {
-            this.setState({
-                loading: true
-            })
-            this.onGetBandicota(isProfileDecrypt.id)
-        });
+        this.onRecommend()
     }
 
-    onGetBandicota(id) {
-        bandicotaAction.getBandicota(id).then(e => {
-            console.log("getBandicota", e)
+    onRecommend() {
+        foodsAction.Recommend().then(e => {
             if (e.status === "success") {
                 this.setState({
-                    getBandicota: e.respond,
-                    loading: false
+                    Recommend: e.respond,
                 })
+                this.onAllFood()
             } else {
                 this.onOpenAlert("Err", "เกิดข้อผิดพลาด")
             }
         });
+    }
+
+    onAllFood() {
+        foodsAction.AllFood().then(e => {
+            if (e.status === "success") {
+                this.setState({
+                    allFoods: e.respond,
+                    // loading: false
+                })
+                this.onReducerData(e.respond)
+            } else {
+                this.onOpenAlert("Err", "เกิดข้อผิดพลาด")
+            }
+        });
+    }
+
+    onReducerData(data) {
+        const groups = data.reduce((groups, history) => {
+            var region = history.region
+            if (!groups[region]) {
+                groups[region] = [];
+            }
+            groups[region].push(history);
+            return groups;
+        }, {});
+
+        const groupArrays = Object.keys(groups).map((region) => {
+            return {
+                region,
+                DataGroups: groups[region]
+            };
+        });
+        this.setState({
+            allFoodsByRegion: groupArrays,
+            loading: false
+        })
     }
 
     onOpenAlert(type, info) {
@@ -107,195 +120,181 @@ export default class Home extends Component {
         });
     }
 
-    onHistoryDetail(status, data) {
-        if (status === "Pending") {
-            if (data.week_six !== null) {
-                this.onOpenAlert("Err", "ข้อมูลรายการนี้ไม่ถูกต้อง")
-            } else {
-                var setDataInScreen = {
-                    "type": data.type === "หนูโต" ? 1 : 2,
-                    "parenting": data.parenting === "กรมปศุสัตว์" ? 1 : 2,
-                    "id": parseFloat(data.id),
-                    "week_one": data.week_one,
-                    "week_two": data.week_two,
-                    "week_three": data.week_three,
-                    "week_four": data.week_four,
-                    "week_five": data.week_five,
-                    "week_six": data.week_six,
-                    "week_seven": data.week_seven,
-                    "price": data.price,
-                    "weight": data.weight,
-                    "body": data.body,
-                    "status": data.status,
-                }
-                console.log("setDataInScreen", setDataInScreen)
-                this.props.navigation.navigate('CheckListWeek', {
-                    dataInScreen: setDataInScreen
-                })
-            }
-        } else if (status === "Success") {
-            this.props.navigation.navigate('HistoryDetail', {
-                dataInScreen: data
-            })
-        }
-    }
-
-    onNextToHome() {
-        this.props.navigation.navigate('HomeCreate')
-    }
-
-    onAskBandicota(id) {
+    onChangeTabBar(type) {
         this.setState({
-            loading: true
+            tabBar: type
         })
-        this.refsArray[id].close();
-        var dataForm = {
-            "bandicotas_id": id
-        }
-        bandicotaAction.deleteBandicota(dataForm).then(e => {
-            console.log("deleteBandicota", e)
-            if (e.status === "success") {
-                this.onSuccessDelete()
-            } else {
-                this.onOpenAlert("Err", "เกิดข้อผิดพลาด")
-            }
-        });
     }
 
-    onSuccessDelete() {
-        alert = (<ModalLib isVisible={true}>
-            <View style={ModalStyles.ModalContent}>
-                <Text allowFontScaling={false} style={ModalStyles.ModalTitle}>แจ้งเตือน</Text>
-                <Text allowFontScaling={false} style={ModalStyles.ModalSubTitle}>ลบรายการสำเร็จ</Text>
-                <View style={ModalStyles.contentButton}>
-                    <TouchableOpacity
-                        activeOpacity={1}
-                        style={ModalStyles.btnOne}
-                        onPress={() => this.onCloseSuccessDelete()}
-                    >
-                        <Text allowFontScaling={false} style={ModalStyles.btnOneText}>ตกลง</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-        </ModalLib>)
-        this.setState({
-            isCheckAlert: alert,
-            loading: false,
-        });
+    onDetailFoods(id) {
+        this.props.navigation.navigate('FoodsDetail', {
+            dataInScreen: id
+        })
     }
 
-    onCloseSuccessDelete() {
-        this.setState({
-            isCheckAlert: null,
-            loading: true
+    onGetAllFoodsByRegion(allFoods) {
+        var allFoodsCard = []
+        allFoods.map((key, index) => {
+            allFoodsCard.push(
+                <TouchableOpacity
+                    onPress={() => this.onDetailFoods(allFoods[index].id)}
+                    activeOpacity={1}
+                >
+                    <View style={{
+                        width: 170,
+                        height: 170,
+                        paddingRight: 15,
+                        paddingBottom: 20,
+                        paddingTop: 5,
+                    }}>
+                        <ImageBackground
+                            source={{ uri: allFoods[index].image }}
+                            style={{
+                                flex: 1,
+                            }}
+                            imageStyle={{ borderRadius: 6 }}
+                        >
+                            <View style={{
+                                // backgroundColor: 'rgba(0,0,0,0.3)',
+                                width: '100%', height: '100%', borderRadius: 6,
+                            }}>
+                                <View style={{
+                                    position: 'absolute',
+                                    width: '100%',
+                                    alignItems: 'center',
+                                    bottom: 0,
+                                    borderBottomRightRadius: 6,
+                                    borderBottomLeftRadius: 6,
+                                    backgroundColor: 'rgba(0,0,0,0.5)',
+                                    padding: 10
+                                }}>
+                                    <Text style={[MainStyles.Text18, MainStyles.textWhite]} numberOfLines={1} ellipsizeMode="tail">
+                                        {allFoods[index].name}
+                                    </Text>
+                                </View>
+                            </View>
+                        </ImageBackground>
+                    </View>
+                </TouchableOpacity>
+            );
         });
-        this.componentDidMount()
+        return allFoodsCard;
     }
 
     render() {
-        const { isCheckAlert, loading, getBandicota } = this.state
-        var getBandicotaCard = []
-        getBandicota.map((key, index) => {
-            var createdData = moment(getBandicota[index].created_at, 'YYYY-MM-DD hh:mm:ss').add('y', +543).locale('th').format("ll")
-            getBandicotaCard.push(
-                <Swipeable
-                    ref={ref => {
-                        this.refsArray[getBandicota[index].id] = ref; //or this.refsArray[item.id] 
-                    }}
-                    renderRightActions={(progress, dragx) => {
-                        return (
-                            <TouchableOpacity
-                                style={styles.contentCardDelete}
-                                activeOpacity={1}
-                                onPress={() => this.onAskBandicota(getBandicota[index].id)}
-                            >
-                                <Text allowFontScaling={false} style={styles.contentCardDeleteText}>ลบ</Text>
-                                <Text allowFontScaling={false} style={styles.contentCardDeleteText}>รายการ</Text>
-                            </TouchableOpacity>
-                        );
-                    }}
-                >
-                    <TouchableOpacity
-                        activeOpacity={1}
-                        onPress={() => this.onHistoryDetail(getBandicota[index].status, getBandicota[index])}
-                        style={MainStyles.Card}
-                    >
-                        <View style={MainStyles.Card2Col}>
-                            <Text allowFontScaling={false} style={[MainStyles.textGray]}>ครั้งที่ {getBandicota[index].id} | {createdData}</Text>
-                            <Text allowFontScaling={false} style={[MainStyles.Card2ColRight, getBandicota[index].status === "Pending" ? MainStyles.textYellow : MainStyles.textGreen]}>{getBandicota[index].status}</Text>
-                        </View>
-                        <View style={[MainStyles.Card2Col]}>
-                            <Text allowFontScaling={false} style={[MainStyles.textGray, MainStyles.textOrange, MainStyles.Text26]}>
-                                {getBandicota[index].type}
-                            </Text>
-                        </View>
-                        <View style={[MainStyles.Card2Col2]}>
-                            <Text allowFontScaling={false} style={[MainStyles.textGray]}>{getBandicota[index].parenting}</Text>
-                        </View>
-                        <View style={MainStyles.BorderBottomGrayWhite}></View>
-                        <View style={MainStyles.Card2Col}>
-                            <Text allowFontScaling={false} style={[MainStyles.textGray]}>ราคากรมปศุสัตว์ (กรัม)</Text>
-                            <Text allowFontScaling={false} style={[MainStyles.Card2ColRight, MainStyles.textGray]}>ตัวละ (บาท)</Text>
-                        </View>
-                        <View style={MainStyles.Card2Col}>
-                            <Text allowFontScaling={false} style={[MainStyles.textGray, MainStyles.textOrange, MainStyles.Text16]}>{getBandicota[index].weight === null ? "-" : getBandicota[index].weight}</Text>
-                            <Text allowFontScaling={false} style={[MainStyles.Card2ColRight, MainStyles.textOrange, MainStyles.Text16]}>{getBandicota[index].price === null ? "-" : getBandicota[index].price}</Text>
-                        </View>
-                    </TouchableOpacity>
-                </Swipeable>
+        const { isCheckAlert, loading, tabBar, allFoodsByRegion, Recommend } = this.state
+
+        var allFoodsByRegionCard = []
+        allFoodsByRegion.map((key, index) => {
+            allFoodsByRegionCard.push(
+                <View>
+                    <Text allowFontScaling={false} style={[MainStyles.Text18, MainStyles.textRed]}>{allFoodsByRegion[index].region}</Text>
+                    <ScrollView style={[{ flex: 1 }]} horizontal showsHorizontalScrollIndicator={false}>
+                        {this.onGetAllFoodsByRegion(allFoodsByRegion[index].DataGroups)}
+                    </ScrollView>
+                </View>
             );
         });
-        return (
-            <SafeAreaView style={MainStyles.content} forceInset={{ bottom: 'always', top: 'never' }}>
-                <ScrollView showsVerticalScrollIndicator={false}>
-                    {isCheckAlert}
-                    {loading ? <Spinner visible={true} overlayColor={"rgba(0,0,0, 0.65)"} color={"#ffac2a"} /> : null}
-                    {getBandicotaCard}
-                </ScrollView>
+
+        var RecommendCard = []
+        Recommend.map((key, index) => {
+            RecommendCard.push(
                 <TouchableOpacity
+                    onPress={() => this.onDetailFoods(Recommend[index].id)}
                     activeOpacity={1}
-                    onPress={() => this.onNextToHome()}
-                    style={{
-                        alignSelf: 'center',
-                        marginTop: 10
-                    }}
+                    style={{ flexDirection: 'column' }}
                 >
-                    <Image
-                        resizeMode={'contain'}
-                        source={require('../../assets/image/add.png')}
-                        style={{
-                            height: 60,
-                        }}
-                    />
+                    <View style={{
+                        width: '100%',
+                        height: 200,
+                        paddingBottom: 20,
+                        paddingTop: 5,
+                    }}>
+                        <ImageBackground
+                            source={{ uri: Recommend[index].image }}
+                            style={{
+                                flex: 1,
+                            }}
+                            imageStyle={{ borderRadius: 6 }}
+                        >
+                            <View style={{
+                                // backgroundColor: 'rgba(0,0,0,0.3)',
+                                width: '100%', height: '100%', borderRadius: 6,
+                            }}>
+                                <View style={{
+                                    position: 'absolute',
+                                    width: '100%',
+                                    alignItems: 'center',
+                                    bottom: 0,
+                                    borderBottomRightRadius: 6,
+                                    borderBottomLeftRadius: 6,
+                                    backgroundColor: 'rgba(0,0,0,0.5)',
+                                    padding: 10
+                                }}>
+                                    <Text style={[MainStyles.Text18, MainStyles.textWhite]} numberOfLines={1} ellipsizeMode="tail">
+                                        {Recommend[index].name}
+                                    </Text>
+                                </View>
+                            </View>
+                        </ImageBackground>
+                    </View>
                 </TouchableOpacity>
-            </SafeAreaView>
+            );
+        });
+
+        return (
+            <ImageBackground
+                style={{ flex: 1, paddingTop: 50 }}
+                source={require('../../assets/image/bghome.jpeg')}
+            >
+                {loading ? <Spinner visible={true} overlayColor={"rgba(0,0,0, 0.65)"} color={"#DD4A48"} /> : null}
+                {isCheckAlert}
+                <SafeAreaView style={{ flex: 1 }} forceInset={{ bottom: 'always', top: 'never' }}>
+                    <ScrollView showsVerticalScrollIndicator={false} style={[styles.contentScrollView]}>
+                        <View style={[MainStyles.content]}>
+                            <Text allowFontScaling={false} style={[MainStyles.title, MainStyles.textRedBd]}>เปิดตำราหาอาหารไทย</Text>
+                            <View style={[MainStyles.tabBarMenu]}>
+                                <TouchableOpacity
+                                    activeOpacity={1}
+                                    onPress={() => this.onChangeTabBar('Category')}
+                                    style={[tabBar === "Category" ? MainStyles.tabBarLeftAcitve : MainStyles.tabBarLeft]}
+                                >
+                                    <Text allowFontScaling={false} style={tabBar === "Category" ? MainStyles.tabBarTextActive : MainStyles.tabBarText}>หมวดหมู่อาหาร</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    activeOpacity={1}
+                                    onPress={() => this.onChangeTabBar('Recommend')}
+                                    style={[tabBar === "Recommend" ? MainStyles.tabBarLeftAcitve : MainStyles.tabBarLeft]}
+                                >
+                                    <Text allowFontScaling={false} style={tabBar === "Recommend" ? MainStyles.tabBarTextActive : MainStyles.tabBarText}>เมนูแนะนำ</Text>
+                                </TouchableOpacity>
+                            </View>
+
+                            {tabBar === "Category" ?
+                                <View style={[MainStyles.mt15]} >
+                                    {allFoodsByRegionCard}
+                                </View>
+                                :
+                                <View style={[MainStyles.mt15]} >
+                                    {RecommendCard}
+                                </View>
+                            }
+
+                        </View>
+                    </ScrollView>
+                </SafeAreaView >
+            </ImageBackground >
         );
     }
 }
 
 
 const styles = StyleSheet.create({
-    contentCardDelete: {
-        backgroundColor: '#e81500',
-        flexDirection: 'column',
-        borderTopRightRadius: 10,
-        borderBottomRightRadius: 10,
-        marginTop: 5,
-        marginLeft: -10,
-        marginBottom: 15,
-        padding: 15,
-        shadowColor: "#000",
-        shadowOffset: { height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 2,
-        borderWidth: 1,
-        borderColor: '#f3f3f3',
-        justifyContent: 'center',
+    contentScrollView: {
+        marginTop: 15,
+        alignSelf: Platform.isPad ? 'center' : 'flex-start',
+        width: Platform.isPad ? '80%' : '100%',
     },
-    contentCardDeleteText: {
-        fontSize: 14,
-        color: '#fff',
-        fontFamily: 'Prompt',
-        textAlign: 'center'
-    },
+
 });
+

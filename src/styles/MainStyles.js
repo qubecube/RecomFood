@@ -46,13 +46,20 @@ export default StyleSheet.create({
         textAlign: 'center',
     },
     title:{
-        fontSize: Platform.isPad ? 43 : 33, 
+        fontSize: 24, 
         color: '#00A4E4',
         fontFamily: 'Prompt-Regular',
         marginBottom: 10,
     },
+    titleDetail:{
+        fontSize: 24, 
+        color: '#00A4E4',
+        fontFamily: 'Prompt-Regular',
+        marginTop: 15,
+        marginBottom: 10,
+    },
     titleCenter:{
-        fontSize: Platform.isPad ? 43 : 33, 
+        fontSize: 24, 
         color: '#00A4E4',
         fontFamily: 'Prompt-Regular',
         marginBottom: 10,
@@ -96,6 +103,7 @@ export default StyleSheet.create({
     mt10:{ marginTop: 10 },
     mt15:{ marginTop: 15 },
     mt20:{ marginTop: 20 },
+    mt30:{ marginTop: 30 },
     mt50:{ marginTop: 50 },
     mb5:{ marginBottom: 5 },
     mb10:{ marginBottom: 10 },
@@ -206,7 +214,8 @@ export default StyleSheet.create({
     },
     textRedBd:{
         color: '#D0021B',
-        fontFamily: 'Prompt-Regular'
+        fontFamily: 'Prompt-Regular',
+        fontWeight: 'bold'
     },
     textGreen: {
         fontFamily: 'Prompt-Regular',
@@ -279,7 +288,7 @@ export default StyleSheet.create({
     },
     btnRed: {
         width: '100%',
-        backgroundColor: '#FF6B6B',
+        backgroundColor: '#DD4A48',
         borderRadius: 40,
         padding: 9,
         width: '100%',
@@ -616,7 +625,7 @@ export default StyleSheet.create({
         marginRight: '2%',
     },
     tabBarLeftAcitve:{
-        backgroundColor: '#3ba7e9',
+        backgroundColor: '#D0021B',
         width: '49%',
         borderRadius: 10,
         shadowColor: "#000",
@@ -656,12 +665,12 @@ export default StyleSheet.create({
         paddingBottom: 10,
     },
     tabBarText:{
-        color: '#a5a5a5',
+        color: '#333333',
         textAlign: 'center',
         justifyContent: 'center', 
         alignItems: 'center',
         fontFamily: 'Prompt-Regular',
-        fontSize: Platform.isPad ? 26 : 22, 
+        fontSize: 16, 
     },
     tabBarTextActive:{
         color: '#ffff',
@@ -669,7 +678,7 @@ export default StyleSheet.create({
         justifyContent: 'center', 
         alignItems: 'center',
         fontFamily: 'Prompt-Regular',
-        fontSize: Platform.isPad ? 26 : 22, 
+        fontSize: 16, 
     },
 
    

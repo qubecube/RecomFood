@@ -34,7 +34,7 @@ export default StyleSheet.create({
     },
     ModalTitle:{
         fontSize: 20, 
-        color: '#ffac2a',
+        color: '#D0021B',
         fontFamily: 'Prompt-Bold',
         // fontWeight: '500',
         textAlign: 'center',
@@ -103,7 +103,7 @@ export default StyleSheet.create({
     },
     btnOne: {
         width: '100%',
-        backgroundColor: '#ffac2a',
+        backgroundColor: '#D0021B',
         borderRadius: 40,
         padding: 7,
     },

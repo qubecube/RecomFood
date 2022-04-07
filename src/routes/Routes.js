@@ -4,21 +4,15 @@ import { NavigationContainer, DarkTheme, DefaultTheme } from '@react-navigation/
 import { createStackNavigator, useHeaderHeight } from '@react-navigation/stack';
 import TabNavigator from './TabNavigator';
 
-import Home from '../page/Home.js';
-import HomeCreate from '../page/HomeCreate';
-
-import History from '../page/History';
-import Recommend from '../page/Recommend';
-import Setting from '../page/Setting';
-
 import Signin from '../page/Signin';
 import Register from '../page/Register';
+import Home from '../page/Home';
+import Filter from '../page/Filter';
+import Random from '../page/Random';
+import Map from '../page/Map';
+import Profile from '../page/Profile';
 
-import TutorialCheck from '../page/TutorialCheck';
-import CheckListWeek from '../page/CheckListWeek';
-import HistoryInside from '../page/HistoryInside';
-import HistoryDetail from '../page/HistoryDetail';
-
+import FoodsDetail from '../page/FoodsDetail';
 
 const Stack = createStackNavigator();
 function StackNaviga() {
@@ -37,7 +31,7 @@ function StackNaviga() {
         headerBackImage: () => (
             <Image
                 resizeMode={'contain'}
-                source={require("../../assets/icon/backapp.png")}
+                source={require("../../assets/icon/backappred.png")}
                 style={[TabBarBottomStyles.setheaderBackImage]}
             />
         ),
@@ -47,121 +41,14 @@ function StackNaviga() {
             <Stack.Navigator>
                 <Stack.Screen name="Signin" component={Signin} options={MainPageOptionNoBack} />
                 <Stack.Screen name="Register" component={Register} options={MainPageOptionNoBack} />
-                <Stack.Screen name="Home" component={TabNavigator} options={MainPageOptionNoBack} />
-                <Stack.Screen name="History" component={History} options={MainPageOptionNoBack} />
-                <Stack.Screen name="Recommend" component={Recommend} options={MainPageOptionNoBack} />
-                <Stack.Screen name="Setting" component={Setting} options={MainPageOptionNoBack} />
+                 
+                <Stack.Screen name="Home" component={TabNavigator} options={MainPageOptionNoBack} />    
+                <Stack.Screen name="Filter" component={Filter} options={MainPageOptionNoBack} />      
+                <Stack.Screen name="Random" component={Random} options={MainPageOptionNoBack} />      
+                <Stack.Screen name="Map" component={Map} options={MainPageOptionNoBack} />      
+                <Stack.Screen name="Profile" component={Profile} options={MainPageOptionNoBack} />   
 
-                <Stack.Screen name="HomeCreate" component={HomeCreate}
-                    options={{
-                        title: "การเลี้ยง",
-                        headerTitleStyle: {
-                            alignSelf: 'center',
-                            fontSize: 18,
-                            color: '#ffac2a',
-                            fontFamily: 'Prompt-Regular',
-                            marginLeft: Platform.OS == "ios" ? 0 : 0,
-                        },
-                        headerBackTitleVisible: false,
-                        headerStyle: { shadowOpacity: 0, elevation: 0, },
-                        cardStyle: { backgroundColor: '#fff' },
-                        headerBackImage: () => (
-                            <Image
-                                resizeMode={'contain'}
-                                source={require("../../assets/icon/backappyellow.png")}
-                                style={[TabBarBottomStyles.setheaderBackImage]}
-                            />
-                        )
-                    }}
-                />
-                <Stack.Screen name="TutorialCheck" component={TutorialCheck}
-                    options={{
-                        title: "เตรียม",
-                        headerTitleStyle: {
-                            alignSelf: 'center',
-                            fontSize: 18,
-                            color: '#ffac2a',
-                            fontFamily: 'Prompt-Regular',
-                            marginLeft: Platform.OS == "ios" ? 0 : 0,
-                        },
-                        headerBackTitleVisible: false,
-                        headerStyle: { shadowOpacity: 0, elevation: 0, },
-                        cardStyle: { backgroundColor: '#fff' },
-                        headerBackImage: () => (
-                            <Image
-                                resizeMode={'contain'}
-                                source={require("../../assets/icon/backappyellow.png")}
-                                style={[TabBarBottomStyles.setheaderBackImage]}
-                            />
-                        )
-                    }}
-                />
-                <Stack.Screen name="CheckListWeek" component={CheckListWeek}
-                    options={{
-                        title: "ตารางเลี้ยงหนู",
-                        headerTitleStyle: {
-                            alignSelf: 'center',
-                            fontSize: 18,
-                            color: '#ffac2a',
-                            fontFamily: 'Prompt-Regular',
-                            marginLeft: Platform.OS == "ios" ? 0 : 0,
-                        },
-                        headerBackTitleVisible: false,
-                        headerStyle: { shadowOpacity: 0, elevation: 0, },
-                        cardStyle: { backgroundColor: '#fff' },
-                        headerBackImage: () => (
-                            <Image
-                                resizeMode={'contain'}
-                                source={require("../../assets/icon/backappyellow.png")}
-                                style={[TabBarBottomStyles.setheaderBackImage]}
-                            />
-                        )
-                    }}
-                />
-                <Stack.Screen name="HistoryInside" component={HistoryInside}
-                    options={{
-                        title: "ประวัติ",
-                        headerTitleStyle: {
-                            alignSelf: 'center',
-                            fontSize: 18,
-                            color: '#ffac2a',
-                            fontFamily: 'Prompt-Regular',
-                            marginLeft: Platform.OS == "ios" ? 0 : 0,
-                        },
-                        headerBackTitleVisible: false,
-                        headerStyle: { shadowOpacity: 0, elevation: 0, },
-                        cardStyle: { backgroundColor: '#fff' },
-                        headerBackImage: () => (
-                            <Image
-                                resizeMode={'contain'}
-                                source={require("../../assets/icon/backappyellow.png")}
-                                style={[TabBarBottomStyles.setheaderBackImage]}
-                            />
-                        )
-                    }}
-                />
-                <Stack.Screen name="HistoryDetail" component={HistoryDetail}
-                    options={{
-                        title: "รายละเอียด",
-                        headerTitleStyle: {
-                            alignSelf: 'center',
-                            fontSize: 18,
-                            color: '#ffac2a',
-                            fontFamily: 'Prompt-Regular',
-                            marginLeft: Platform.OS == "ios" ? 0 : 0,
-                        },
-                        headerBackTitleVisible: false,
-                        headerStyle: { shadowOpacity: 0, elevation: 0, },
-                        cardStyle: { backgroundColor: '#fff' },
-                        headerBackImage: () => (
-                            <Image
-                                resizeMode={'contain'}
-                                source={require("../../assets/icon/backappyellow.png")}
-                                style={[TabBarBottomStyles.setheaderBackImage]}
-                            />
-                        )
-                    }}
-                />
+                <Stack.Screen name="FoodsDetail" component={FoodsDetail} options={OptionOnlyArrowBack} />                      
             </Stack.Navigator>
         </NavigationContainer>
     );

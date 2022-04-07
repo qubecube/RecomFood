@@ -31,6 +31,16 @@ export default StyleSheet.create({
         fontSize: 14, 
         color: '#333333'
     },
+    inputFormWhite:{
+        height: 45, 
+        backgroundColor: '#ffffff', 
+        borderRadius: 7,
+        paddingLeft: 20,
+        paddingRight: 20,
+        fontFamily: 'Prompt-Regular',
+        fontSize: 14, 
+        color: '#333333'
+    },
     inputFormPassContent:{
         flexDirection: 'row',
         width: '100%',

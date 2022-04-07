@@ -36,8 +36,8 @@ export default class Signin extends Component {
     state = {
         loading: false,
         isCheckAlert: null,
-        Username: "",
-        Password: "",
+        Username: "wazowski",
+        Password: "11111",
     }
 
     async componentDidMount() {
@@ -99,6 +99,7 @@ export default class Signin extends Component {
             "id": Data.id,
             "fullname": Data.fullname,
             "username": Data.username,
+            "image": Data.image
         }
         console.log("setProfile", setProfile)
         await AsyncStorage.setItem('isProfile', JSON.stringify(setProfile));
@@ -142,105 +143,84 @@ export default class Signin extends Component {
     render() {
         const { isCheckAlert, loading } = this.state
         return (
-            <View style={{ flex: 1, backgroundColor: '#DD4A48'}}>
-                {loading ? <Spinner visible={true} overlayColor={"rgba(0,0,0, 0.65)"} color={"#DD4A48"} /> : null}
-                {isCheckAlert}
-                <View style={{
-                    backgroundColor: '#DD4A48',
-                    height: 270,
-                    marginTop: 90
-                }}>
-                    <View style={{
-                        marginLeft: 15,
-                        marginRight: 15,
-                    }}>
-                        <Text style={[MainStyles.textWhiteBd,MainStyles.titleMain, { marginTop: 60, color: '#ffffff', fontSize: 30 }]}>ยินดีต้อนรับ</Text>
-                    </View>
-                </View>
-                <View style={[styles.cardSignin]}>
-                    <View style={{ marginTop: 25 }}>
+            <ImageBackground
+                style={{ flex: 1, paddingTop: 50 }}
+                source={require('../../assets/image/bglogin.png')}
+            >
+                <View style={[MainStyles.content]}>
+                    {loading ? <Spinner visible={true} overlayColor={"rgba(0,0,0, 0.65)"} color={"#DD4A48"} /> : null}
+                    {isCheckAlert}
+                    <View>
+                        <Text allowFontScaling={false} style={[styles.title, MainStyles.textRed]}>เข้าสู่ระบบ</Text>
+                        <Text allowFontScaling={false} style={[styles.subtitle, MainStyles.textRedBd]}>เปิดตำราหาอาหารไทย</Text>
                         <View style={InputStyles.contentInputForm}>
+                            <Text allowFontScaling={false} style={InputStyles.inputFormTextLight}>ชื่อผู้ใช้งาน</Text>
                             <TextInput
                                 clearButtonMode="always"
                                 allowFontScaling={false}
-                                style={[InputStyles.inputForm, {backgroundColor: '#FD5D5D' , color:'#fff'}]}
-                                placeholder="ชื่อผู้ใช้"
-                                placeholderTextColor={"#fff"}
+                                style={InputStyles.inputForm}
+                                placeholder="Username"
+                                placeholderTextColor={"#838383"}
                                 value={this.state.Username}
                                 onChange={e => this.handleChange(e, 'Username')}
                             />
                         </View>
-                        <View style={[InputStyles.contentInputForm,{marginTop: 15}]}>
+                        <View style={[InputStyles.contentInputForm, { marginTop: 15 }]}>
+                            <Text allowFontScaling={false} style={InputStyles.inputFormTextLight}>รหัสผ่าน</Text>
                             <TextInput
                                 clearButtonMode="always"
                                 allowFontScaling={false}
-                                style={[InputStyles.inputForm, {backgroundColor: '#FD5D5D' , color:'#fff'}]}
-                                placeholder="รหัสผ่าน"
-                                placeholderTextColor={"#fff"}
+                                style={InputStyles.inputForm}
+                                placeholder="กรอกรหัสผ่าน"
+                                placeholderTextColor={"#838383"}
                                 value={this.state.Password}
                                 onChange={e => this.handleChange(e, 'Password')}
-                                secureTextEntry={true}
                             />
                         </View>
-                        <View style={InputStyles.contentInputForm}>
-                            <Text style={{ textAlign: 'right' , color : '#fff' , fontFamily: 'Prompt-Regular' , marginEnd: 10 , marginTop:-5}}>ลืมรหัสผ่าน?</Text>
-                        </View>
-
-                        <View style={[MainStyles.btnContent]}>  
+                        <View style={[MainStyles.btnContent, MainStyles.mt30]}>
                             <TouchableOpacity
                                 activeOpacity={1}
                                 onPress={() => this.onSubmit()}
-                                style={this.state.btnSubmit ? MainStyles.btnDisabled : MainStyles.btnRed}
+                                disabled={this.state.btnSubmit}
+                                style={MainStyles.btnRed}
                             >
-                                <Text allowFontScaling={false} style={MainStyles.btnRedText}>เข้าสู่ระบบ</Text>
+                                <Text allowFontScaling={false} style={MainStyles.btnBlueText}>เข้าสู่ระบบ</Text>
                             </TouchableOpacity>
                         </View>
-                        
-                    </View>
-                </View>
-                <View style={{ flex: 0.5, backgroundColor: '#DD4A48' }}>
-                    <View style={{
-                        marginTop: 0,
-                        backgroundColor: '#DD4A48',
-                        marginLeft: 35,
-                        marginRight: 35,
-                    }}>
-                        <View style={{ marginBottom: 15 }}>
-                            <Text style={[MainStyles.textWhite, { textAlign: 'center' , fontWeight:'bold' }]}>หรือ</Text>
-                        </View>
-                        <View style={[MainStyles.btnContent]}>
-                            <TouchableOpacity
-                                activeOpacity={1}
-                                onPress={() => this.onRegister()}
-                                style={[MainStyles.btnGray]}
-                            >
-                                <Text allowFontScaling={false} style={[MainStyles.btnOrangeText, {fontWeight:'bold' , color:'#fff'}]}>สมัครสมาชิก</Text>
-                            </TouchableOpacity>
+                        <View style={{
+                            marginTop: 20,
+                        }}>
+                            <View style={{ marginBottom: 15 }}>
+                                <Text style={[MainStyles.textGrayBd, { textAlign: 'center' }]}>ยังไม่เป็นสมาชิกใช่หรือไม่ ?</Text>
+                            </View>
+                            <View style={[MainStyles.btnContent]}>
+                                <TouchableOpacity
+                                    activeOpacity={1}
+                                    onPress={() => this.onRegister()}
+                                    style={[MainStyles.btnGray]}
+                                >
+                                    <Text allowFontScaling={false} style={MainStyles.btnOrangeText}>สมัครสมาชิก</Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     </View>
                 </View>
-            </View>
+            </ImageBackground>
         );
     }
 }
 
 
 const styles = StyleSheet.create({
-    cardSignin: {
-        marginTop: -150,
-        marginLeft: 15,
-        marginRight: 15,
-        borderRadius: 10,
-        borderRadius: 10,
-        paddingTop: 10,
-        paddingBottom: 10,
-        paddingLeft: 20,
-        paddingRight: 15,
-        shadowColor: "#000",
-        shadowOffset: { height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 2,
-        borderWidth: 2,
-        borderColor: '#DD4A48',
+    title: {
+        fontSize: 20,
+        marginBottom: 10,
+        textAlign: Platform.isPad ? 'center' : 'left'
+    },
+    subtitle: {
+        fontSize: 26,
+        marginBottom: 20,
+        marginTop: -10,
+        textAlign: Platform.isPad ? 'center' : 'left'
     },
 });
